@@ -1,5 +1,5 @@
-	##See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-#
+	#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
 #FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 #WORKDIR /app
 #
@@ -29,7 +29,10 @@
 ##CMD ["dotnet", "MVP.API.dll"]
 #
 ##CMD ASPNETCORE_URLS=http://*:$PORT dotnet AlquilarMVP.dll
+#
+#
 
+#-----------------------------
 
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
@@ -47,5 +50,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /app ./
 
-EXPOSE 5000
-ENTRYPOINT ["dotnet", "Otto.m.tokens.dll"]
+#EXPOSE 5000
+#CMD ["dotnet", "Otto.m.tokens.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet Otto.m.tokens.dll
