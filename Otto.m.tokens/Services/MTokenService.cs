@@ -44,6 +44,7 @@ namespace Otto.m.tokens.Services
             if (token != null)
             {
                 UpdateTokenProperties(dto, token);
+                UpdateDateTimeKindForPostgress(token);
             }
 
             _context.Entry(token).State = EntityState.Modified;
@@ -63,6 +64,7 @@ namespace Otto.m.tokens.Services
             if (token != null && token.MUserId == dto.MUserId)
             {
                 UpdateTokenProperties(dto, token);
+                UpdateDateTimeKindForPostgress(token);
             }
 
 
@@ -79,6 +81,14 @@ namespace Otto.m.tokens.Services
             token.RefreshToken = dto.RefreshToken;
             token.Modified = DateTime.UtcNow;
             token.ExpiresAt = utcNow + TimeSpan.FromSeconds((double)dto.ExpiresIn);
+        }
+
+        private static void UpdateDateTimeKindForPostgress(MToken token) 
+        {
+            token.Created = DateTime.SpecifyKind((DateTime) token.Created, DateTimeKind.Utc);
+            token.Modified = DateTime.SpecifyKind((DateTime) token.Modified, DateTimeKind.Utc);
+            token.ExpiresAt = DateTime.SpecifyKind((DateTime) token.ExpiresAt, DateTimeKind.Utc);
+
         }
 
 

@@ -20,20 +20,22 @@ namespace Otto.m.tokens.Models
             if (!optionsBuilder.IsConfigured)
             {
 
-                var server = Environment.GetEnvironmentVariable("SERVER");
-                var db = Environment.GetEnvironmentVariable("DB");
-                var user = Environment.GetEnvironmentVariable("USER");
-                var pass = Environment.GetEnvironmentVariable("PASS");
+                var server = Environment.GetEnvironmentVariable("PSQL_SERVER");
+                var db = Environment.GetEnvironmentVariable("PSQL_DB");
+                var strPort = Environment.GetEnvironmentVariable("PSQL_PORT");
+                var port = Int32.Parse(String.IsNullOrEmpty(strPort) ? "5432": strPort);
+                var user = Environment.GetEnvironmentVariable("PSQL_USER");
+                var pass = Environment.GetEnvironmentVariable("PSQL_PASS");
 
                 Console.WriteLine($"SERVER: {server}");
                 Console.WriteLine($"DB: {db}");
+                Console.WriteLine($"PORT: {port}");
                 Console.WriteLine($"USER: {user}");
                 Console.WriteLine($"PASS: {pass}");
 
-                var connectionString = $"Server={server};Database={db};User Id={user};Password={pass};";
+                var connectionString = $"Server={server};Port={port};Database={db};Uid={user};Pwd={pass};";
 
-
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseNpgsql(connectionString);
 
             }
         }
