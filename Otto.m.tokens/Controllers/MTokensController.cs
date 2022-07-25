@@ -56,7 +56,7 @@ namespace Otto.m.tokens.Controllers
         }
 
 
-        // GET: api/MTokens/5
+        // GET: api/MTokens/ByMUserId/5
         [HttpGet("ByMUserId/{id}")]
         public async Task<ActionResult<MTokenDTO>> GetMTokenByUser(long id)
         {
@@ -69,6 +69,22 @@ namespace Otto.m.tokens.Controllers
 
             return mToken;
         }
+
+
+        // POST: api/MTokens/RefreshByMUserId/5
+        [HttpGet("RefreshByMUserId/{id}")]
+        public async Task<ActionResult<MTokenDTO>> RefreshByUser(long id) 
+        {
+            var mToken = await _service.RefreshMTokenByUserAsync(id);
+
+            if (mToken == null)
+            {
+                return NotFound();
+            }
+
+            return mToken;
+        }
+
 
         // PUT: api/MTokens/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

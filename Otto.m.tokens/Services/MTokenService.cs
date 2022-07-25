@@ -9,10 +9,12 @@ namespace Otto.m.tokens.Services
     {
 
         private readonly OttoContext _context;
+        private readonly RefreshService _refreshService;
 
-        public MTokenService(OttoContext context)
+        public MTokenService(OttoContext context, RefreshService refreshService)
         {
             _context = context;
+            _refreshService = refreshService;
         }
 
         public async Task<List<MTokenDTO>> GetAsync()
@@ -35,6 +37,46 @@ namespace Otto.m.tokens.Services
                 return MTokenMapper.GetMTokenDTO(token);
             }
 
+            return null;
+        }
+
+
+        public async Task<MTokenDTO> RefreshMTokenByUserAsync(long id)
+        {
+
+            var token = await _context.MTokens.Where(t => t.MUserId == id).FirstOrDefaultAsync();
+            if (token != null)
+            {
+                // Llamar al servicio para hacer el refresh
+                var response = await _refreshService.RefreshToken((long)token.MUserId, token.RefreshToken);
+
+                // hacer el update en la base
+                if (response.res == Response.OK)
+                {
+                    UpdateTokenProperties(response.token, token);
+                    UpdateDateTimeKindForPostgress(token);
+
+                    _context.Entry(token).State = EntityState.Modified;
+                    var rowsAffected = await _context.SaveChangesAsync();
+
+                    if (rowsAffected < 1) 
+                    {
+                        Console.WriteLine("Hubo un error al hacer el update en la tabla");
+                        return null;
+                    }
+
+                }
+                else 
+                {
+                    Console.WriteLine($"La respuesta del refresh no fue OK: {response.msg}");
+                    return null;
+                }
+
+                // devolver el token
+                return MTokenMapper.GetMTokenDTO(token);
+            }
+
+            Console.WriteLine($"El token de ese usuario no esta en la base {id}");
             return null;
         }
 
@@ -94,6 +136,18 @@ namespace Otto.m.tokens.Services
             token.Modified = DateTime.UtcNow;
             token.ExpiresAt = utcNow + TimeSpan.FromSeconds((double)dto.ExpiresIn);
         }
+
+        private static void UpdateTokenProperties(MRefreshTokenDTO dto, MToken? token)
+        {
+            var utcNow = DateTime.UtcNow;
+
+            token.AccessToken = dto.AccessToken;
+            token.RefreshToken = dto.RefreshToken;
+            token.Modified = DateTime.UtcNow;
+            token.ExpiresAt = utcNow + TimeSpan.FromSeconds((double)dto.ExpiresIn);
+        }
+
+
 
         private static void UpdateDateTimeKindForPostgress(MToken token) 
         {
