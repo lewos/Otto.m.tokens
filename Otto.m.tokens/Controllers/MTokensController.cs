@@ -55,6 +55,21 @@ namespace Otto.m.tokens.Controllers
             return mToken;
         }
 
+
+        // GET: api/MTokens/5
+        [HttpGet("ByMUserId/{id}")]
+        public async Task<ActionResult<MTokenDTO>> GetMTokenByUser(long id)
+        {
+            var mToken = await _service.GetMTokenByUserAsync(id);
+
+            if (mToken == null)
+            {
+                return NotFound();
+            }
+
+            return mToken;
+        }
+
         // PUT: api/MTokens/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -26,8 +26,20 @@ namespace Otto.m.tokens.Services
 
         }
 
-        //public Property Get(string id) =>
-        //    _properties.Find<Property>(property => property.Id == id).FirstOrDefault();
+        public async Task<MTokenDTO> GetMTokenByUserAsync(long id)
+        {
+
+            var token = await _context.MTokens.Where(t => t.MUserId == id).FirstOrDefaultAsync();
+            if (token != null)
+            {
+                return MTokenMapper.GetMTokenDTO(token);
+            }
+
+            return null;
+        }
+
+
+        //MUserId
 
 
 

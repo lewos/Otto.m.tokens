@@ -27,12 +27,6 @@ namespace Otto.m.tokens.Models
                 var user = Environment.GetEnvironmentVariable("PSQL_USER");
                 var pass = Environment.GetEnvironmentVariable("PSQL_PASS");
 
-                Console.WriteLine($"SERVER: {server}");
-                Console.WriteLine($"DB: {db}");
-                Console.WriteLine($"PORT: {port}");
-                Console.WriteLine($"USER: {user}");
-                Console.WriteLine($"PASS: {pass}");
-
                 var connectionString = $"Server={server};Port={port};Database={db};Uid={user};Pwd={pass};";
 
                 optionsBuilder.UseNpgsql(connectionString);
