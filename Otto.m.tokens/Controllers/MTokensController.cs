@@ -138,8 +138,13 @@ namespace Otto.m.tokens.Controllers
             var token = await _context.MTokens.Where(t => t.MUserId == dto.MUserId).FirstOrDefaultAsync();
             if (token != null && token.MUserId == dto.MUserId)
             {
-                var rowsAffected = await _service.UpdateWithMTokenIdAsync(dto);
-                return Update(rowsAffected);
+                var tuple = await _service.UpdateWithMTokenIdAsync(dto);
+                var newDTO = tuple.Item1;
+                var rowsAffected = tuple.Item2;
+                if (rowsAffected > 0)
+                    return Ok(newDTO);
+                else
+                    return Conflict("Error al Update de token");
             }
             else
             {

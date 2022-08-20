@@ -111,7 +111,7 @@ namespace Otto.m.tokens.Services
         /// </summary>
         /// <param name="mToken"></param>
         /// <returns>number of rows affected</returns>
-        public async Task<int> UpdateWithMTokenIdAsync(MTokenDTO dto)
+        public async Task<Tuple<MTokenDTO, int>> UpdateWithMTokenIdAsync(MTokenDTO dto)
         {
             // Si ya existe un token con ese mismo usuario, hago el update
             var token = await _context.MTokens.Where(t => t.MUserId == dto.MUserId).FirstOrDefaultAsync();
@@ -123,7 +123,11 @@ namespace Otto.m.tokens.Services
 
 
             _context.Entry(token).State = EntityState.Modified;
-            return await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
+
+            var newDTO = MTokenMapper.GetMTokenDTO(token);
+
+            return new Tuple<MTokenDTO, int>(newDTO, rowsAffected);
 
         }
 

@@ -28,7 +28,6 @@ namespace Otto.m.tokens.Services
                 string endpoint = "oauth/token";
                 string url = string.Join('/', baseUrl, endpoint);
 
-                // TODO poner en una variable de entorno
                 var data = new Dictionary<string, string>
                 {
                     {"grant_type", "refresh_token"},
